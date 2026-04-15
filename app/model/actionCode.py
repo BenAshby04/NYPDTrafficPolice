@@ -4,5 +4,5 @@ from app.db.base import Base
 
 class ActionCode(Base):
     __tablename__ = "ActionCode"
-    ActCode: Mapped[int] = mapped_column("ActCode", String(50), primary_key=True,nullable=False)
+    ActCode: Mapped[str] = mapped_column("ActCode", String(50), primary_key=True,nullable=False)
     Description: Mapped[str] = mapped_column("Description", String(255), nullable=False)
