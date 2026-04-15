@@ -1,0 +1,9 @@
+fastapi
+pymysql
+uvicorn
+pymysql
+passlib
+sqlalchemy
+pyjwt
+argon2_cffi
+python-multipart
