@@ -237,9 +237,12 @@ GRANT policeRole to 'PaulAdams'@'%';
 SET DEFAULT ROLE policeRole to 'PaulAdams'@'%';
 
 #Create overall administrator
-CREATE USER IF NOT EXISTS 'admin'@'localhost' IDENTIFIED BY 'root';
+CREATE USER IF NOT EXISTS 'admin'@'localhost' IDENTIFIED BY 'admin';
 GRANT ALL PRIVILEGES ON *.* TO 'admin'@'localhost';
 
+
+CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED BY 'root';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost';
 flush privileges;
 
 # --------------------------------------
