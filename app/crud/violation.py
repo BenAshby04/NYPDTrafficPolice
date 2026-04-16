@@ -69,3 +69,39 @@ async def delete_violation(db: Session, NID: int):
         raise HTTPException(status_code=500, detail=f"Error deleting violation: {str(e)}")
 
     return {"message": "Violation deleted successfully!"}
+
+async def add_violation(db: Session, violation_date: date, violation_time: time, location: str, DLNum: str, PID: int, VIN: str, vioCode: str, notes: str, actCode: str):
+
+    person_exists = db.execute(text("SELECT 1 FROM Person WHERE DLNum = :dl_num LIMIT 1"), {"dl_num": DLNum}).first()
+    if not person_exists:
+        raise HTTPException(status_code=404, detail="Person with DLNum not found")
+
+    officer_exists = db.execute(text("SELECT 1 FROM Officer WHERE PID = :pid LIMIT 1"), {"pid": PID}).first()
+    if not officer_exists:
+        raise HTTPException(status_code=404, detail="Officer with PID not found")
+
+    vehicle_exists = db.execute(text("SELECT 1 FROM Vehicle WHERE VIN = :vin LIMIT 1"), {"vin": VIN}).first()
+    if not vehicle_exists:
+        raise HTTPException(status_code=404, detail="Vehicle with VIN not found")
+
+    try:
+        result = db.execute(text("INSERT INTO Notice (Date, Time, Location) VALUES (:date, :time, :location)"), {"date": violation_date, "time": violation_time, "location": location})
+        notice_id = result.lastrowid
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error adding notice: {str(e)}")
+
+    try:
+        db.execute(text("INSERT INTO Commits (DLNum, NID) VALUES (:dl_num, :nid)"), {"dl_num": DLNum, "nid": notice_id})
+        db.execute(text("INSERT INTO Involves (NID, VIN) VALUES (:nid, :vin)"), {"nid": notice_id, "vin": VIN})
+        db.execute(text("INSERT INTO Issues (NID, PID) VALUES (:nid, :pid)"), {"nid": notice_id, "pid": PID})
+        db.execute(text("INSERT INTO NoticeVio (NID, ItemID, VioCode, Notes) VALUES (:nid, 1, :vio_code, :notes)"), {"nid": notice_id, "vio_code": vioCode, "notes": notes})
+        db.execute(text("INSERT INTO NoticeAction (NID, ActCode) VALUES (:nid, :act_code)"), {"nid": notice_id, "act_code": actCode})
+
+        db.commit()
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error adding violation: {str(e)}")
+
+    return {"message": "Violation added successfully!"}
