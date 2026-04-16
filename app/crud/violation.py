@@ -52,3 +52,17 @@ async def update_violation(db: Session, NID: int, violation_date: date, violatio
         raise HTTPException(status_code=500, detail=f"Error updating violation: {str(e)}")
 
     return {"message": "Violation updated successfully!"}
+
+async def delete_violation(db: Session, NID: int):
+    notice_exists = db.execute(text("SELECT 1 FROM Notice WHERE NID = :nid LIMIT 1"), {"nid": NID}).first()
+    if not notice_exists:
+        raise HTTPException(status_code=404, detail="Violation with NID not found")
+
+    try:
+        db.execute(text("DELETE FROM Notice WHERE NID = :nid"), {"nid": NID})
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error deleting violation: {str(e)}")
+
+    return {"message": "Violation deleted successfully!"}
