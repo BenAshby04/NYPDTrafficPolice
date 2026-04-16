@@ -8,6 +8,7 @@ from datetime import date, time
 async def get_violation_code(db: Session, vio_code: str):
     return db.query(ViolationCodeModel).filter(ViolationCodeModel.VioCode == vio_code).first()
 
+
 async def get_violations_by_DLNumber(db: Session, DLNum: str):
     result = db.execute(text("CALL NYPD.GetCiviData(:DLNum)"), {"DLNum": DLNum})
 
@@ -18,6 +19,7 @@ async def get_violations_by_DLNumber(db: Session, DLNum: str):
         raise HTTPException(status_code=404, detail="No violations found for the provided DLNumber")
     
     return {"Violations": [dict(row) for row in violations]}
+
 
 async def update_violation(db: Session, NID: int, violation_date: date, violation_time: time, location: str, DLNum: str, PID: int, VIN: str, vioCode: str, notes: str, actCode: str):
 
@@ -52,6 +54,7 @@ async def update_violation(db: Session, NID: int, violation_date: date, violatio
         raise HTTPException(status_code=500, detail=f"Error updating violation: {str(e)}")
 
     return {"message": "Violation updated successfully!"}
+
 
 async def delete_violation(db: Session, NID: int):
     notice_exists = db.execute(text("SELECT 1 FROM Notice WHERE NID = :nid LIMIT 1"), {"nid": NID}).first()
