@@ -27,3 +27,12 @@ async def update_officer(db: Session, PID: int, officer: Officer):
     db.commit()
     db.refresh(existing_officer)
     return existing_officer 
+
+async def delete_officer(db: Session, PID: int):
+    existing_officer = db.query(OfficerModel).filter(OfficerModel.PID == PID).first()
+    if not existing_officer:
+        raise HTTPException(status_code=404, detail="Officer not found")
+
+    db.delete(existing_officer)
+    db.commit()
+    return {"message": "Officer deleted successfully!"}
