@@ -1,3 +1,4 @@
+-- Active: 1776360909447@@127.0.0.1@3306@NYPD
 #Drop the database every time to allow changes
 DROP DATABASE IF EXISTS NYPD;
 #Create database and use it in the sql file
@@ -333,6 +334,33 @@ BEGIN
     Commit;
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE AddDetatchmentDistrict(
+    IN districtName VARCHAR(50),
+    IN detatchName VARCHAR(50)
+)
+BEGIN
+	DECLARE newDistrictID INT;
+    DECLARE newDetatchID INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		ROLLBACK;
+    END;
+	START TRANSACTION;
+    
+    INSERT IGNORE INTO District(DistrictName)
+    VALUES(districtName);
+    SELECT DistrictID INTO newDistrictID FROM District WHERE DistrictName = districtName;
+    INSERT IGNORE INTO Detatchment (DetatchName)
+    VALUES (detatchName);
+    SELECT DetatchID INTO newDetatchID FROM Detatchment WHERE DetatchName = detatchName;
+    INSERT INTO PartOf (DetatchID, DistrictID)
+    VALUES(newDetatchID, newDistrictID);
+    Commit;
+END //
+DELIMITER ;
+
 
 
 # Add new Notice procedure
