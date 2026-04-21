@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schema.actionCode import ActionCode
-from app.crud.actionCode import get_action_code, create_action_code
+from app.crud.actionCode import get_action_code, create_action_code, update_action_code, delete_actionCode
 
 router = APIRouter(prefix="/action-code", tags=["action-code"])
 
@@ -16,3 +16,11 @@ async def get_action_code_by_id(CodeID: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=ActionCode)
 async def create_new_action_code(action_code: ActionCode, db: Session = Depends(get_db)):
     return await create_action_code(db, action_code)
+
+@router.put("/{CodeID}", response_model=ActionCode)
+async def update_action_code_by_id(CodeID: int, action_code: ActionCode, db: Session = Depends(get_db)):
+    return await update_action_code(db, CodeID, action_code)
+
+@router.delete("/{CodeID}")
+async def delete_action_code_by_id(CodeID: int, db: Session = Depends(get_db)):
+    return await delete_actionCode(db, CodeID)
