@@ -91,7 +91,8 @@ CREATE TABLE IF NOT EXISTS District(
 CREATE TABLE IF NOT EXISTS User(
     UserID INT PRIMARY KEY AUTO_INCREMENT,
     Username VARCHAR(50) NOT NULL,
-    HashedPassword VARCHAR(50) NOT NULL
+    HashedPassword VARCHAR(50) NOT NULL,
+    UserRole VARCHAR(50) NOT NULL
 );
 
 #Create Relationship Tables
