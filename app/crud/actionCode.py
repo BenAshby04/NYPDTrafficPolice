@@ -2,9 +2,9 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from sqlalchemy import text
 from app.model.actionCode import ActionCode as ActionCodeModel
-from app.schema.actionCode import ActionCode
+from app.schema.actionCode import actionCode as ActionCode
 
-async def get_actionCode(db: Session, ActionCodeID: int):
+async def get_action_Code(db: Session, ActionCodeID: int):
     return db.query(ActionCodeModel).filter(ActionCodeModel.ActCode == ActionCodeID).first()
 
 async def create_actionCode(db: Session, actionCode: ActionCode):
