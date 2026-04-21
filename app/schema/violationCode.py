@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
-class violationCode(BaseModel):
+class ViolationCode(BaseModel):
     VioCode: str
     Description: str

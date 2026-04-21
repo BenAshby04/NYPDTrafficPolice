@@ -1,3 +1,4 @@
+-- Active: 1776360909447@@127.0.0.1@3306@NYPD
 #Drop the database every time to allow changes
 DROP DATABASE IF EXISTS NYPD;
 #Create database and use it in the sql file
@@ -98,6 +99,17 @@ CREATE TABLE IF NOT EXISTS Lives(
     FOREIGN KEY (DLNum) REFERENCES Person(DLNum)
     ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (Number, ZipCode) REFERENCES Address(Number,ZipCode)
+    ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS Registered(
+    Number INT NOT NULL,
+    ZipCode VARCHAR(50) NOT NULL,
+    VIN VARCHAR(50) NOT NULL,
+    PRIMARY KEY(Number, ZipCode, VIN),
+    FOREIGN KEY (Number, ZipCode) REFERENCES Address(Number,ZipCode)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (VIN) REFERENCES Vehicle(VIN)
     ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -333,6 +345,33 @@ BEGIN
     Commit;
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE AddDetatchmentDistrict(
+    IN districtName VARCHAR(50),
+    IN detatchName VARCHAR(50)
+)
+BEGIN
+	DECLARE newDistrictID INT;
+    DECLARE newDetatchID INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		ROLLBACK;
+    END;
+	START TRANSACTION;
+    
+    INSERT IGNORE INTO District(DistrictName)
+    VALUES(districtName);
+    SELECT DistrictID INTO newDistrictID FROM District WHERE DistrictName = districtName;
+    INSERT IGNORE INTO Detatchment (DetatchName)
+    VALUES (detatchName);
+    SELECT DetatchID INTO newDetatchID FROM Detatchment WHERE DetatchName = detatchName;
+    INSERT INTO PartOf (DetatchID, DistrictID)
+    VALUES(newDetatchID, newDistrictID);
+    Commit;
+END //
+DELIMITER ;
+
 
 
 # Add new Notice procedure
