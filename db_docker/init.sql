@@ -88,6 +88,12 @@ CREATE TABLE IF NOT EXISTS District(
     DistrictName VARCHAR(50) NOT NULL
 );	
 
+CREATE TABLE IF NOT EXISTS USER(
+    UserID INT PRIMARY KEY AUTO_INCREMENT,
+    Username VARCHAR(50) NOT NULL,
+    HashedPassword VARCHAR(50) NOT NULL
+);
+
 #Create Relationship Tables
 
 #Creates a table to represent: (Person 1 -> Lives -> N Address)
