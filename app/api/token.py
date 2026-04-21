@@ -12,7 +12,7 @@ router = APIRouter(prefix="/token", tags=["token"])
 
 @router.post("/")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Annotated[Session, Depends(get_db)]):
-    user = get_user_by_username(db,form_data.username)
+    user = await get_user_by_username(db,form_data.username)
     if not user or not verifyPassword(form_data.password, user.HashedPassword):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

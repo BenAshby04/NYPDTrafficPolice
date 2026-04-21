@@ -9,7 +9,7 @@ async def get_user(db: Session, UserID: int):
     return db.query(UserModel).filter(UserModel.UserID == UserID).first()
 
 async def create_user(db: Session, user_in: User):
-    new_user = UserModel(UserID=None, Username=user_in.Username, Password=getPasswordHash(user_in.Password), UserRole=user_in.UserRole)
+    new_user = UserModel(Username=user_in.Username, HashedPassword=getPasswordHash(user_in.HashedPassword), UserRole=user_in.UserRole)
     
     db.add(new_user)
     db.commit()
