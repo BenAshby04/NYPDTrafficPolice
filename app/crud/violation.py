@@ -5,9 +5,6 @@ from app.model.violationCode import ViolationCode as ViolationCodeModel
 from app.schema.violationCode import ViolationCode
 from datetime import date, time
 
-async def get_violation_code(db: Session, vio_code: str):
-    return db.query(ViolationCodeModel).filter(ViolationCodeModel.VioCode == vio_code).first()
-
 
 async def get_violations_by_DLNumber(db: Session, DLNum: str):
     result = db.execute(text("CALL NYPD.GetCiviData(:DLNum)"), {"DLNum": DLNum})
