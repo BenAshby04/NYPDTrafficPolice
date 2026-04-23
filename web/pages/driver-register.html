@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang ="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Driver Registration - NYPD Violations</title>
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body>
+        <nav>
+            <a href="../index.html" style="text-decoration: none; color:var(--text);"><strong>NYPD Traffic Violations</strong></a>
+        </nav>
+        <div class="container" style="padding: 32px 24px; max-width: 700px;">
+            <div class="card">
+                <h1 style="font-size: 22px; margin-bottom: 20px;">Create an account</h1>
+                <h2 style="font-size: 15px; margin-bottom: 12px;">Account Details</h2>
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username">
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password">
+                    <span style="font-size: 12px; color:var(--text-muted);">
+                        Mininum 8 characters. Must include uppercase, lowercase, and a number.
+                    </span>
+                </div>
+                <div class="field">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword">
+            </div>
+            <h2 style="font-size: 15px; margin: 24px 0 12px;">Personal Details</h2>
+            <div class="grid-2">
+                <div class="field">
+                    <label for="number">House/Flat Number</label>
+                    <input type="number" id="number">
+                </div>
+                <div class="field">
+                    <label for="street">Street Name</label>
+                    <input type="text" id="street">
+                </div>
+                <div class="field">
+                    <label for="zipcode">ZipCode</label>
+                    <input type="text" id="zipcode">
+                </div>
+                <div class="field">
+                    <label for="state">State</label>
+                    <input type="text" id="state">
+                </div>
+                <div class="field">
+                    <label for="dlNum">Driving License Number</label>
+                    <input type="text" id="dlNum">  
+                </div>
+                <div class="field">
+                    <label for="dlState">License State</label>
+                    <input type="text" id="dlState" placeholder="e.g. NY">
+                </div>
+                <div class="field">
+                    <label for="fname">First Name</label>
+                    <input type="text" id="fname">
+                </div>
+                <div class="field">
+                    <label for="lname">Last Name</label>
+                    <input type="text" id="lname">
+                </div>
+                <div class="field">
+                    <label for="dob">Date Of Birth</label>
+                    <input type="date" id="dob">
+                </div>
+                <div class="field">
+                    <label for="eyeColor">Eye Colour</label>
+                    <input type="text" id="eyeColor">
+                </div>
+                <div class="field">
+                    <label for="height">Height (cm)</label>
+                    <input type="number" id="height" step="0.1">
+                </div>
+                <div class="field">
+                    <label for="weight">Weight (kg)</label>
+                    <input type="number" id="weight" step="0.1">
+                </div>
+            </div>
+            <h2 style="font-size: 15px; margin: 24px 0 12px;">Vehicle Details</h2>
+            <div class="grid-2">
+                <div class="field">
+                    <label for="vin">VIN</label>
+                    <input type="text" id="vin">
+                </div>
+                <div class="field">
+                    <label for="lplate">Licence Plate</label>
+                    <input type="text" id="lplate">
+                </div>
+                <div class="field">
+                    <label for="statePlate">Plate State</label>
+                    <input type="text" id="statePlate" placeholder="e.g. NY">
+                </div>
+                <div class="field">
+                    <label for="year">Year</label>
+                    <input type="number" id="year">
+                </div>
+                <div class="field">
+                    <label for="make">Make</label>
+                    <input type="text" id="make">
+                </div>
+            </div>
+            <button class="btn btn-primary" id="registerBtn" style="margin-top:16px;">Create Account</button>
+            <p style="margin-top: 16px; font-size: 13px;">
+                Already have an account? <a href="driver-login.html">Log in</a>
+            </p>
+            </div>
+        </div>
+        <script src="../js/auth.js"></script>
+        <script src="../js/api.js"></script>
+        <script src="../js/ui.js"></script>
+        <script src="../js/validation.js"></script>
+        <script>
+            ['username','password','confirmPassword','dlNum','fname','lname','dob','dlState','eyeColor','height','weight','vin','lplate','statePlate','year','make','number','street','zipcode','state'].forEach(function(id){
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input',function(){clearError(id);})
+            });
+            document.getElementById('registerBtn').addEventListener('click', async function(){
+                let valid = true;
+
+                if(!validateRequired(document.getElementById('username').value)){
+                    showError('username', 'Username is required');
+                    valid = false;
+                }
+
+                if(!validatePassword(document.getElementById('password').value)){
+                    showError('password','Min 8 chars with uppercase, lowercase, and a number');
+                    valid = false; 
+                }
+
+                if(document.getElementById('password').value !== document.getElementById('confirmPassword').value){
+                    showError('confirmPassword', 'Passwords do not match');
+                    valid = false;
+                }
+                
+                if(!validateRequired(document.getElementById('dlNum').value)){
+                    showError('dlNum', 'License Number is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('fname').value)){
+                    showError('fname',' First Name is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('lname').value)){
+                    showError('lname', 'Last Name is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('dob').value)){
+                    showError('dob', 'Date Of Birth is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('dlState').value)){
+                    showError('dlState','License State is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('eyeColor').value)){
+                    showError('eyeColor','Eye Colour is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('height').value)){
+                    showError('height','Height is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('weight').value)){
+                    showError('weight', 'Weight is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('vin').value)){
+                    showError('vin', 'VIN is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('lplate').value)){
+                    showError('lplate', 'Licence Plate is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('statePlate').value)){
+                    showError('statePlate', 'Plate State is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('year').value)){
+                    showError('year', 'Year is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('make').value)){
+                    showError('make','Make is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('number').value)){
+                    showError('number','House Number is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('street').value)){
+                    showError('street','Street Name is required');
+                    valid = false;
+                }
+
+                if(!validateRequired(document.getElementById('state').value)){
+                    showError('state','State is required');
+                    valid=false;
+                }
+
+                if(!validateRequired(document.getElementById('zipcode').value)){
+                    showError('zipcode','ZipCode is required');
+                    valid=false;
+                }
+
+                if(!valid){
+                    showToast('Please fix the errors above', 'error')
+                    return;
+                }
+
+                showLoading('registerBtn');
+
+                try{
+                    await apiFetch('/user/',{
+                        method: 'POST',
+                        body: JSON.stringify({
+                            UserID: 0,
+                            Username: document.getElementById('username').value,
+                            HashedPassword: document.getElementById('password').value,
+                            UserRole: 'driver'
+                        })
+                    });
+                    
+                    await apiFetch('/person/',{
+                        method: 'POST',
+                        body: JSON.stringify({
+                            DLNum: document.getElementById('dlNum').value,
+                            FName: document.getElementById('fname').value,
+                            LName: document.getElementById('lname').value,
+                            DOB: document.getElementById('dob').value,
+                            Height: parseFloat(document.getElementById('height').value),
+                            Weight: parseFloat(document.getElementById('weight').value),
+                            EyeColour: document.getElementById('eyeColor').value,
+                            DLState: document.getElementById('dlState').value
+                        })
+                    });
+
+                    await apiFetch('/vehicle/',{
+                        method: 'POST',
+                        body: JSON.stringify({
+                            VIN: document.getElementById('vin').value,
+                            LPlate: document.getElementById('lplate').value,
+                            StatePlate: document.getElementById('statePlate').value,
+                            Year: parseInt(document.getElementById('year').value) || 0,
+                            Make: document.getElementById('make').value
+                        })
+                    });
+
+                    await apiFetch('/address/',{
+                        method: 'POST',
+                        body: JSON.stringify({
+                            Number: document.getElementById('number').value,
+                            ZipCode: document.getElementById('zipcode').value,
+                            Street: document.getElementById('street').value,
+                            State: document.getElementById('state').value
+                        })
+                    });
+
+                    await apiFetch('/lives/', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            DLNum: document.getElementById('dlNum').value,
+                            Number: parseInt(document.getElementById('number').value) || 0,
+                            ZipCode: document.getElementById('zipcode').value
+                        })
+                    });
+
+                    await apiFetch('/owns/',{
+                        method: 'POST',
+                        body: JSON.stringify({
+                            DLNum: document.getElementById('dlNum').value,
+                            VIN: document.getElementById('vin').value
+                        })
+                    });
+
+                    await apiFetch('/registered/',{
+                        method: 'POST',
+                        body: JSON.stringify({
+                            Number: parseInt(document.getElementById('number').value) || 0,
+                            ZipCode: document.getElementById('zipcode').value,
+                            VIN: document.getElementById('vin').value
+                        })
+                    });
+
+                    showToast('Account Created! Redirecting to login...');
+                    setTimeout(function() {
+                        window.location.href = 'driver-login.html';
+                    }, 1500);
+                } catch (err){
+                    showToast(err.message, 'error');
+                } finally{
+                    hideLoading('registerBtn');
+                }
+
+            });
+        </script>
+    </body>
+</html>

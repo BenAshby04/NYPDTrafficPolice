@@ -1,11 +1,12 @@
 from pydantic import BaseModel
+from datetime import date
 
 class Person(BaseModel):
     DLNum: str
     FName: str
     LName: str
-    DOB: str
+    DOB: date
     Height: float
     Weight: float
-    EyeColor: str
+    EyeColour: str
     DLState: str
