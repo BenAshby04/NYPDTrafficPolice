@@ -6,9 +6,9 @@ from app.crud.person import get_person, create_person, update_person, delete_per
 
 router = APIRouter(prefix="/person", tags=["person"])
 
-@router.get("/{PersonID}", response_model=Person)
-async def get_person_by_id(PersonID: int, db: Session = Depends(get_db)):
-    person = await get_person(db, PersonID)
+@router.get("/{DLNum}", response_model=Person)
+async def get_person_by_id(DLNum: int, db: Session = Depends(get_db)):
+    person = await get_person(db, DLNum)
     if person is None:
         raise HTTPException(status_code=404, detail="Person not found")
     return person
