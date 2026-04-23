@@ -11,5 +11,5 @@ class Person(Base):
     DOB: Mapped[date] = mapped_column("DOB", Date, nullable=False)
     Height: Mapped[float] = mapped_column("Height", Numeric(4,1), nullable=False)
     Weight: Mapped[float] = mapped_column("WEIGHT", Numeric(4,1), nullable=False)
-    EyeColor: Mapped[str] = mapped_column("EyeColor", String(50), nullable=False)
+    EyeColour: Mapped[str] = mapped_column("EyeColour", String(50), nullable=False)
     DLState: Mapped[str] = mapped_column("DLState", String(25), nullable=False)
