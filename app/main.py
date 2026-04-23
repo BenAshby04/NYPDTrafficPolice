@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.init_db import init_db
-from app.api import actionCode, address, assigned, detatchment, district, lives, officer, owns, partOf, person, registered, token, user, vehicle, violation, violationCode
+from app.api import actionCode, address, assigned, detatchment, district, lives, officer, owns, partOf, person, registered, token, user, vehicle, violation, violationCode, userPerson
 
 app = FastAPI()
 
@@ -33,3 +33,4 @@ app.include_router(user.router)
 app.include_router(vehicle.router)
 app.include_router(violation.router)
 app.include_router(violationCode.router)
+app.include_router(userPerson.router)
