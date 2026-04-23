@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Violations - NYPD Violations</title>
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body>
+        <nav>
+            <strong>NYPD Traffic Violations</strong>
+            <div class="nav-links" id="navLinks">
+                <a href="driver-dashboard.html">Dashboard</a>
+                <a href="driver-profile.html">My Profile</a>
+                <button class="btn btn-outline" onclick="logout()">Log Out</button>
+            </div>
+            <button class="hamburger" id="hamburger">&#9776;</button>
+        </nav>
+        <div class="container" style="padding: 32px 24px;">
+            <h1 style="font-size: 24px; margin-bottom: 8px;">My Violations</h1>
+            <p style="color:var(--text-muted);margin-bottom: 24px;">
+                All Traffic Violations associated with your vehicle
+            </p>
+            <div id="loadingMsg" style="color:var(--text-muted);">Loading Your Violations...</div>
+            <div id="violationContainer"></div>
+        </div>
+
+        <script src="../js/api.js"></script>
+        <script src="../js/auth.js"></script>
+        <script src="../js/ui.js"></script>
+        <script>
+            document.getElementById('hamburger').addEventListener('click',function(){
+                document.getElementById('navLinks').classList.toggle('open');
+            })
+
+            document.addEventListener('DOMContentLoaded',async function(){
+                requireLogin('driver-login.html');
+                requireRole('driver');
+
+                const dlNum = sessionStorage.getItem('dlNum');
+                if(!dlNum){
+                    document.getElementById("loadingMsg").textContent='Could not find your license number. Please login again.';
+                    return;
+                }
+
+                try{
+                    const data = await apiFetch('/violation/dl/' + dlNum);
+                    console.log('API Resonse: ', data);
+                    console.log('First Violation: ', data.Violations[0]);
+                    document.getElementById('loadingMsg').style.display = 'none';
+                    renderViolations(data.Violations);
+                } catch(err){
+                    document.getElementById('loadingMsg').textContent = 'No violations on record'
+                }
+            });
+
+            function renderViolations(violations){
+                const el = document.getElementById('violationContainer');
+
+                const realViolations = (violations || []).filter(function(v){
+                    return v.NID !==null;
+                })
+
+                if(realViolations.length === 0){
+                    el.innerHTML = '<div class="card"><p style="color:var(--text-muted);">No Violations on record.</p></div>'
+                    return;
+                }
+
+                let html = '<div class="card" style="padding:0; overflow-x:auto;">';
+                html += '<table>';
+                html += "<thead><tr>";
+                html += "<th>Notice #</th>";
+                html += "<th>Date</th>";
+                html += "<th>Time</th>";
+                html += "<th>Locations</th>";
+                html += "<th>Violation</th>";
+                html += "<th>Action</th>";
+                html += "</tr></thead>";
+                html += "<tbody>";
+                
+                violations.forEach(function(v){
+                    html += '<tr>';
+                    html += "<td>" + (v.NID || '-') + "</td>";
+                    html += "<td>" + (v.NoticeDate || '-') + "</td>";
+                    html += "<td>" + (v.NoticeTime || '-') + "</td>";
+                    html += "<td>" + (v.NoticeLocation || '-') + "</td>";
+                    html += "<td>" + (v.VioCode || '-') + "</td>";
+                    html += "<td>" + (v.ActCode || '-') + "</td>";
+                    html += '</tr>';
+                });
+
+                html += "</tbody></table></div>";
+                el.innerHTML = html;
+            }
+        </script>
+
+    </body>
+</html>

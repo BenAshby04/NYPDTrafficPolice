@@ -71,13 +71,18 @@
                         sessionStorage.setItem('dlNum', link.DLNum);
                     } catch(err){
                         showToast('Could not find your driver record', 'error');
-                        logout();
+                        setTimeout(function(){
+                            logout();
+                        }, 1500)
+                        
                         return;
                     }
 
                     if(user.UserRole !== 'driver'){
-                        logout();
                         showToast('Please use the admin login page', 'error');
+                        setTimeout(function(){
+                            logout();
+                        }, 1500)
                         return;
                     }
 
