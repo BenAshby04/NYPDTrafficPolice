@@ -16,7 +16,7 @@ async def get_officer_by_id(OfficerID: int, db: Session = Depends(get_db)):
 async def create_new_officer(officer: Officer, db: Session = Depends(get_db)):
     return await create_officer(db, officer)
 
-@router.put("/{OfficerID}", response_model=Officer)
+@router.put("/{OfficerID}", response_model=dict)
 async def update_officer_by_id(OfficerID: int, officer: Officer, db: Session = Depends(get_db)):
     return await update_officer(db, OfficerID, officer)
 

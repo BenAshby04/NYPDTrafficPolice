@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="device-width, initial-scale=1.0">
+        <title>Driver Login - NYPD Violations</title>
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body>
+        <nav>
+            <a href="../index.html" style="text-decoration: none; color: var(--text);"><strong>NYPD Traffic Violations</strong></a>
+        </nav>
+        <div class="page-center">
+            <div class="card" style="width:100%; max-width: 400px;">
+                <h1 style="font-size: 20px; margin-bottom: 6px;">Driver Login</h1>
+                <p style="color:var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+                    Sign in to view your violations.
+                </p>
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Your Username">
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Your Password">
+                </div>
+                <button class="btn btn-primary" id="loginBtn" style="width:100%;">Log in</button>
+                <p style="margin-top: 16px; font-size: 13px; text-align: center;">
+                    No account? <a href="driver-register.html">Register here</a>
+                </p>
+            </div>
+        </div>
+        <script src="../js/auth.js"></script>
+        <script src="../js/api.js"></script>
+        <script src="../js/ui.js"></script>
+        <script>
+            document.getElementById('loginBtn').addEventListener('click',async function(){
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                
+                if(!username || !password){
+                    showToast('Please fill in both fields', 'error')
+                    return;
+                }
+
+                showLoading('loginBtn');
+                
+                try{
+
+                    const formData = new URLSearchParams();
+                    formData.append('username', username)
+                    formData.append('password', password)
+
+                    const res = await fetch('http://127.0.0.1:8000/token',{
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: formData
+                    });
+
+                    if(!res.ok) throw new Error('Incorrect username or password');
+                    
+                    const tokenData = await res.json();
+                    saveToken(tokenData.access_token);
+
+                    const user = await apiFetch('/user/by-username/' + username);
+                    sessionStorage.setItem('userRole', user.UserRole);
+                    sessionStorage.setItem('username', username);
+
+                    try{
+                        const link = await apiFetch('/user-person/by-user/' + user.UserID);
+                        sessionStorage.setItem('dlNum', link.DLNum);
+                    } catch(err){
+                        showToast('Could not find your driver record', 'error');
+                        setTimeout(function(){
+                            logout();
+                        }, 1500)
+                        
+                        return;
+                    }
+
+                    if(user.UserRole !== 'driver'){
+                        showToast('Please use the admin login page', 'error');
+                        setTimeout(function(){
+                            logout();
+                        }, 1500)
+                        return;
+                    }
+
+                    window.location.href = 'driver-dashboard.html';
+                } catch (err){
+                    showToast(err.message,'error');
+                } finally{
+                    hideLoading('loginBtn');
+                }
+            });
+        </script>
+    </body>
+</html>

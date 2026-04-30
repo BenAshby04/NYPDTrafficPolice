@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Profile - NYPD Violations</title>
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body>
+        <nav>
+            <strong>NYPD Traffic Violations</strong>
+            <div class="nav-links" id="navLinks">
+                <a href="driver-dashboard.html">Dashboard</a>
+                <a href="driver-profile.html">My Profile</a>
+                <button class="btn btn-outline" onclick="logout()">Log Out</button>
+            </div>
+            <button class="hamburger" id="hamburger">&#9776;</button>
+        </nav>
+        <div class="container" style="padding: 32px 24px; max-width: 700px;">
+            <div class="card">
+                <h1 style="font-size: 22px; margin-bottom: 8px;">My Profile</h1>
+                <p style="color:var(--text-muted); margin-bottom: 24px;">
+                    Keep your details up to date. Your driving licence number cannot be changed.
+                </p>
+                <div class="field">
+                    <label>Driving Licence Number (read only)</label>
+                    <input type="text" id="dlNumDisplay" readonly style="background: var(--bg);">
+                </div>
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="fname">First Name</label>
+                        <input type="text" id="fname">
+                    </div>
+                    <div class="field">
+                        <label for="lname">Last Name</label>
+                        <input type="text" id="lname">
+                    </div>
+                    <div class="field">
+                        <label for="dob">Date Of Birth</label>
+                        <input type="date" id="dob">
+                    </div>
+                    <div class="field">
+                        <label for="eyeColor">Eye Colour</label>
+                        <input type="text" id="eyeColor">
+                    </div>
+                    <div class="field">
+                        <label for="height">Height (cm)</label>
+                        <input type="number" id="height" step="0.1">
+                    </div>
+                    <div class="field">
+                        <label for="weight">Weight (kg)</label>
+                        <input type="number" id="weight" step="0.1">
+                    </div>
+                    <div class="field">
+                        <label for="dlState">Licence State</label>
+                        <input type="text" id="dlState">
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="saveBtn" style="margin-top: 16px;">Save Changes</button>
+            </div>
+        </div>
+        <script src="../js/auth.js"></script>
+        <script src="../js/api.js"></script>
+        <script src="../js/ui.js"></script>
+        <script>
+            document.getElementById("hamburger").addEventListener('click',function(){
+                document.getElementById('navLinks').classList.toggle('open');
+            });
+
+            document.addEventListener('DOMContentLoaded',async function(){
+                requireLogin('driver-login.html');
+                requireRole('driver');
+                const dlNum = sessionStorage.getItem('dlNum');
+                if(!dlNum){
+                    showToast('Could not find your licence number', 'error');
+                    return;
+                }
+                try{
+                    const person = await apiFetch('/person/'+dlNum);
+
+                    document.getElementById('dlNumDisplay').value = person.DLNum;
+                    document.getElementById('fname').value = person.FName ||'';
+                    document.getElementById('lname').value = person.LName ||'';
+                    document.getElementById('dob').value = person.DOB || '';
+                    document.getElementById('eyeColor').value = person.EyeColour || '';
+                    document.getElementById('height').value = person.Height ||'';
+                    document.getElementById('weight').value = person.Weight ||'';
+                    document.getElementById('dlState').value = person.DLState ||'';
+                }catch(err){
+                    showToast('Could not load your profile', 'error');
+                }
+            });
+            document.getElementById('saveBtn').addEventListener('click', async function(){
+                showLoading('saveBtn')
+                const dlNum = sessionStorage.getItem('dlNum');
+                try{
+                    await apiFetch('/person/' + dlNum,{
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            DLNum: dlNum,
+                            FName: document.getElementById('fname').value,
+                            LName: document.getElementById('lname').value,
+                            DOB: document.getElementById('dob').value,
+                            Height: parseFloat(document.getElementById('height').value) ||0,
+                            Weight: parseFloat(document.getElementById('weight').value) || 0,
+                            EyeColour: document.getElementById('eyeColor').value,
+                            DLState: document.getElementById('dlState').value
+                        })
+                    });
+                    showToast('Profile updated!');
+                } catch(err){
+                    showToast(err.message,'error');
+                } finally{
+                    hideLoading('saveBtn');
+                }
+            });
+        </script>
+    </body>
+</html>

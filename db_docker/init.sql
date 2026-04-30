@@ -206,6 +206,16 @@ CREATE TABLE IF NOT EXISTS PartOf(
     ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS UserPerson(
+    UserID INT NOT NULL,
+    DLNum VARCHAR(50) NOT NULL,
+    PRIMARY KEY(UserID, DLNum),
+    FOREIGN KEY(UserID) REFERENCES User(UserID)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY(DLNum) REFERENCES Person(DLNum)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 
 # --------------------------------------
 # DCL STATEMENTS
@@ -224,10 +234,11 @@ DELIMITER //
 #Make a procedure to give access to all data relating to a specific driver
 CREATE DEFINER = 'root'@'%'  PROCEDURE GetCiviData(IN dlNum VARCHAR(50)) SQL SECURITY DEFINER
 BEGIN
-	SELECT p.DLNum, p.FName, p.LName, p.DOB, v.VIN, v.LPlate, n.NID, n.Date AS NoticeDate, n.Time AS NoticeTime, n.Location AS NoticeLocation, vc.VioCode, vc.Description AS ViolationDescription, ac.ActCode, ac.Description AS ActionRequired
+	SELECT p.DLNum, p.FName, p.LName, p.DOB, v.VIN, v.LPlate, n.NID, n.Date AS NoticeDate, n.Time AS NoticeTime, n.Location AS NoticeLocation, i.PID, vc.VioCode, vc.Description AS ViolationDescription, nv.Notes as ViolationNotes, ac.ActCode, ac.Description AS ActionRequired
 	From Person p
     LEFT JOIN Commits c ON p.DLNum = c.DLNum
     LEFT JOIN  Notice n on c.NID = n.NID
+    LEFT JOIN Issues i on n.NID = i.NID
     LEFT JOIN NoticeVio nv on n.NID = nv.NID
     LEFT JOIN ViolationCode vc on nv.VioCode = vc.VioCode
     LEFT JOIN NoticeAction na on n.NID = na.NID
