@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Admin Dashboard - NYPD Violations</title>
+        <link rel="stylesheet" href="../css/style.css">
+        <style>
+            .bar-row {display: flex; align-items: center; gap: 12px; margin-bottom: 8px;}
+            .bar-label{min-width: 100px; font-size: 12px;}
+            .bar{height: 24px; background:var(--primary); border-radius: 4px;}
+            .bar-value{font-size: 12px; color:var(--text-muted);}
+        </style>
+    </head>
+    <body>
+        <nav>
+            <strong>NYPD Admin</strong>
+            <div class="nav-links" id="navLinks">
+                <a href="admin-dashboard.html">Dashboard</a>
+                <button class="btn btn-outline" onclick="logout()">Log Out</button>
+            </div>
+            <button class="hamburger" id="hamburger">&#9776;</button>
+        </nav>
+        <div class="container" style="padding:32px 24px;">
+            <h1 style="font-size:24px; margin-bottom: 24px;">Admin Dashboard</h1>
+
+            <div class="grid-3" style="margin-bottom: 24px;">
+                <div class="card">
+                    <p style="font-size: 12px; color: var(--text-muted);">Total Violations</p>
+                    <p style="font-size: 28px; font-weight: 500;" id="totalViolations">-</p>
+                </div>
+                <div class="card">
+                    <p style="font-size: 12px; color:var(--text-muted);">Most Common Violations</p>
+                    <p style="font-size: 18px; font-weight: 500;" id="topViolation">-</p>
+                </div>
+                <div class="card">
+                    <p style="font-size: 12px; color: var(--text-muted);">Unique violation types</p>
+                    <p style="font-size: 28px; font-weight: 500;" id="uniqueTypes">-</p>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom: 24px;">
+                <h2 style="font-size:16px; margin-bottom: 16px;">Violations by type</h2>
+                <div id="chart">Loading stats...</div>
+            </div>
+            <div class="card" style="margin-bottom: 24px;">
+                <h2 style="font-size: 16px; margin-bottom: 12px;">Search violations</h2>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="searchDL" placeholder=" Enter Driver licence number">
+                    <button class="btn btn-primary" id="searchBtn">Search</button>
+                </div>
+                <div id="searchResults" style="margin-top: 16px;"></div>
+            </div>
+            <div class="card" style="margin-bottom: 24px;">
+                <h2 style="font-size: 16px; margin-bottom: 12px;" id="formTitle">Create new violation</h2>
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="vDate">Date</label>
+                        <input type="date" id="vDate">
+                    </div>
+                    <div class="field">
+                        <label for="vTime">Time</label>
+                        <input type="time" id="vTime">
+                    </div>
+                    <div class="field" style="grid-column: 1/-1;">
+                        <label for="vLocation">Location</label>
+                        <input type="text" id="vLocation">
+                    </div>
+                    <div class="field">
+                        <label for="vDLNum">Driving Licence Number</label>
+                        <input type="text" id="vDLNum">
+                    </div>
+                    <div class="field">
+                        <label for="vPID">Officer ID (PID)</label>
+                        <input type="number" id="vPID">
+                    </div>
+                    <div class="field">
+                        <label for="vVIN">Vehicle VIN</label>
+                        <input type="text" id="vVIN">
+                    </div>
+                    <div class="field">
+                        <label for="vVioCode">Violation Code</label>
+                        <input type="text" id="vVioCode">
+                    </div>
+                    <div class="field">
+                        <label for="vActCode">Action Code</label>
+                        <input type="text" id="vActCode">
+                    </div>
+                    <div class="field" style="grid-column: 1/-1;">
+                        <label for="vNotes">Notes</label>
+                        <textarea id="vNotes" rows="2"></textarea>
+                    </div>
+                </div>
+                <div style="display:flex; gap: 8px; margin-top: 12px;">
+                    <button class="btn btn-primary" id="submitBtn">Create Violation</button>
+                    <button class="btn btn-outline" id="cancelEditBtn" style="display: none;">Cancel edit</button>
+                </div>
+            
+            </div>
+            <div class="card" style="margin-bottom: 24px;">
+                <h2 style="font-size: 16px; margin-bottom: 12px;">Add an Officer</h2>
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="oFName">Officer's First Name</label>
+                        <input type="text" id="oFName">
+                    </div>
+                    <div class="field">
+                        <label for="oLName">Officer's Last Name</label>
+                        <input type="text" id="oLName">
+                    </div>
+                    <div class="field">
+                        <label for="oPID">Officer's ID (PID)</label>
+                        <input type="number" id="oPID">
+                    </div>
+                </div>
+                <div style="display:flex; gap: 8px; margin-top: 12px;">
+                    <button class="btn btn-primary" id="oSubmitBtn">Create Officer</button>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="card" style="margin-bottom: 24px;">
+                    <h2 style="font-size: 16px; margin-bottom: 12px;">Add Violation Code</h2>
+                    <div class="field">
+                        <label for="newVioCode">New Violation Code</label>
+                        <input type="text" id="newVioCode">
+                    </div>
+                    <div class="field">
+                        <label for="newVioCodeDesc">Description</label>
+                        <textarea id="newVioCodeDesc" rows="2"></textarea>
+                    </div>
+                    <div style="display:flex; gap: 8px; margin-top: 12px;">
+                        <button class="btn btn-primary" id="newVioSubmitBtn">Create Violation Code</button>
+                    </div>
+                </div>
+                <div class="card" style="margin-bottom: 24px;">
+                    <h2 style="font-size: 16px; margin-bottom: 12px;">Add Action Code</h2>
+                    <div class="field">
+                        <label for="newActCode">New Action Code</label>
+                        <input type="text" id="newActCode">
+                    </div>
+                    <div class="field">
+                        <label for="newActCodeDesc">Description</label>
+                        <textarea id="newActCodeDesc" rows="2"></textarea>
+                    </div>
+                    <div style="display:flex; gap: 8px; margin-top: 12px;">
+                        <button class="btn btn-primary" id="newActSubmitBtn">Create Action Code</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/auth.js"></script>
+        <script src="../js/api.js"></script>
+        <script src="../js/ui.js"></script>
+        <script>
+            let editingNID = null;
+
+            document.getElementById('hamburger').addEventListener('click',function(){
+                document.getElementById('navLinks').classList.toggle('open');
+            });
+
+            document.addEventListener('DOMContentLoaded', async function(){
+                requireLogin('admin-login.html')
+                requireRole('admin');
+                await loadStats();
+            });
+            
+            async function loadStats(){
+                try{
+                    const stats = await apiFetch('/violation/stats');
+                    document.getElementById('totalViolations').textContent= stats.total_violations;
+
+                    const topVio = stats.by_violation_type[0];
+                    document.getElementById('topViolation').textContent= topVio ? topVio.VioCode + '(' + topVio.count + ')': 'None';
+                    
+                    document.getElementById('uniqueTypes').textContent=stats.by_violation_type.length;
+
+                    const chartEl = document.getElementById('chart');
+                    if(stats.by_violation_type.length === 0){
+                        chartEl.innerHTML = '<p style="color:var(--text-muted);">No citation data yet.</p>'
+                        return;
+                    }
+
+                    const max = Math.max.apply(null,stats.by_violation_type.map(function(i){ return i.count;}));
+
+                    let html = '';
+                    stats.by_violation_type.forEach(function(item){
+                        const width = Math.round((item.count/max) * 300);
+                        html +='<div class="bar-row">';
+                        html +='<span class="bar-label">' + item.VioCode + '</span>';
+                        html +='<div class="bar" style="width:'+ Math.max(width,4) +'px;"></div>';
+                        html +='<span class="bar-value">' +item.count + '</span>';
+                        html +='</div>';
+                    });
+
+                    chartEl.innerHTML = html;
+                } catch (err){
+                    document.getElementById('chart').innerHTML='<p style="color:var(--danger);">Could not load stats: ' + err.message + '</p>';
+                }
+            }
+
+            //View Violations by DL number
+            document.getElementById('searchBtn').addEventListener('click',async function(){
+                const dlNum = document.getElementById('searchDL').value.trim();
+                if(!dlNum){showToast('Enter a DL Number','error'); return;}
+                showLoading('searchBtn');
+
+                try{
+                    const data = await apiFetch('/violation/dl/'+dlNum);
+                    renderAdminTable(data.Violations);
+                } catch (err){
+                    document.getElementById('searchResults').innerHTML = 
+                    '<p style="color:var(--text-muted);">No Violations Found.</p>';
+                } finally{
+                    hideLoading('searchBtn');
+                }
+            });
+            function renderAdminTable(violations){
+                const el = document.getElementById('searchResults');
+                if (!violations || violations.length === 0){
+                    el.innerHTML = '<p>No results.</p>';
+                    return;
+                }
+                let html = '<div style="overflow-x:auto;"><table>';
+                    html+='<thead><tr>';
+                    html+='<th>NID</th><th>Date</th><th>Location</th><th>VioCode</th><th>Actions</th>';
+                    html+='</tr></thead><tbody>';
+                    violations.forEach(function(v){
+                        html += '<tr>';
+                        html += '<td>'+v.NID+'</td>';
+                        html += '<td>'+(v.Date || '-') + '</td>';
+                        html += '<td>'+(v.Location || '-') + '</td>';
+                        html += '<td>'+(v.VioCode || '-') + '</td>';
+                        html += '<td>';
+                        html += '<button class="btn btn-outline" style="padding:4px 10px; font-size:12px; margin-right:4px;"'+
+                          'onclick="editViolation(' + JSON.stringify(v).replace(/"/g, '&quot;') + ')">Edit</button>';
+                        html += '<button class="btn btn-danger" style="padding:4px 10px;font-size:12px;"'+
+                        'onclick="deleteViolation('+v.NID+')">Delete</button>';
+                        html += '</td>';
+                        html += '</tr>';
+                    });
+                    html += '</tbody></table></div>';
+                    el.innerHTML = html;
+            }
+
+            //Create/Update
+            document.getElementById('submitBtn').addEventListener('click', async function (){
+                const body = {
+                    violation_date: document.getElementById('vDate').value,
+                    violation_time: document.getElementById('vTime').value,
+                    location: document.getElementById('vLocation').value,
+                    DLNum: document.getElementById('vDLNum').value,
+                    PID: parseInt(document.getElementById('vPID').value) || 0,
+                    VIN: document.getElementById('vVIN').value,
+                    vioCode: document.getElementById('vVioCode').value,
+                    notes: document.getElementById('vNotes').value,
+                    actCode: document.getElementById('vActCode').value
+                };
+                showLoading('submitBtn');
+                try{
+                    if(editingNID){
+                        //Update
+                        await apiFetch('/violation/' + editingNID,{
+                            method: 'PUT',
+                            body: JSON.stringify(body)
+                        });
+                        showToast('Violation updated!');
+                        cancelEdit();
+                    }else{
+                        //Create
+                        await apiFetch('/violation/',{
+                            method:'POST',
+                            body: JSON.stringify(body)
+                        });
+                        showToast('Violation Created!');
+                        clearForm();
+                    }
+                    await loadStats();
+                    if(document.getElementById('searchDL').value){
+                        document.getElementById('searchBtn').click();
+                    }
+                } catch(err){
+                    showToast(err.message,'error');
+                } finally{
+                    hideLoading('submitBtn');
+                }
+            });
+
+            //Delete
+            async function deleteViolation(nid){
+                const confirmed = confirm(
+                    'Are you sure you want to delete violation #'+nid+'?\n'+
+                    'This cannot be undone.'
+                );
+                if(!confirmed) return;
+                try{
+                    await apiFetch('/violation/' + nid, {method: 'DELETE'});
+                    showToast('Violation Deleted');
+                    document.getElementById('searchBtn').click();
+                    await loadStats();
+                } catch (err){
+                    showToast(err.message,'error');
+                }
+            }
+
+            //Edit
+
+            function editViolation(violation){
+                console.log("HelloWOrld");
+                editingNID = violation.NID;
+                document.getElementById('formTitle').textContent='Edit violation #' + violation.NID;
+                document.getElementById('submitBtn').textContent = 'Update Violation';
+                document.getElementById('cancelEditBtn').style.display = 'inline-block';
+
+                document.getElementById('vDate').value = violation.NoticeDate ||'';
+                document.getElementById('vTime').value     = formatTimeForInput(violation.NoticeTime) || '';
+                document.getElementById('vLocation').value = violation.NoticeLocation || '';
+                document.getElementById('vDLNum').value    = violation.DLNum || '';
+                document.getElementById('vPID').value      = violation.PID || '';
+                document.getElementById('vVIN').value      = violation.VIN || '';
+                document.getElementById('vVioCode').value  = violation.VioCode || '';
+                document.getElementById('vActCode').value  = violation.ActCode || '';
+                document.getElementById('vNotes').value    = violation.ViolationNotes || '';
+
+                document.getElementById('formTitle').scrollIntoView({behavior:"smooth"});
+            }
+
+            function cancelEdit(){
+                editingNID = null;
+                document.getElementById('formTitle').textContent = 'Create new Violation';
+                document.getElementById('submitBtn').textContent = 'Create Violation';
+                document.getElementById('cancelEditBtn').style.display = 'none';
+                clearForm();
+            }
+
+            function clearForm(){
+                 ['vDate', 'vTime', 'vLocation', 'vDLNum', 'vPID', 'vVIN', 'vVioCode', 'vActCode', 'vNotes'].forEach(function(id){document.getElementById(id).value ='';});
+            }
+            document.getElementById('cancelEditBtn').addEventListener('click',cancelEdit);
+
+            //Officer form
+            document.getElementById('oSubmitBtn').addEventListener('click', async function(){
+                showLoading('oSubmitBtn');
+                try{
+                    await apiFetch('/officer/',{
+                        method: 'POST',
+                        body: JSON.stringify({
+                            PID: document.getElementById('oPID').value,
+                            FName: document.getElementById('oFName').value,
+                            LName: document.getElementById('oLName').value
+                        })
+                    });
+                    showToast('Officer Created');
+                } catch (err){
+                    showToast('Officer PID already exists','error');
+                } finally{
+                    hideLoading('oSubmitBtn');
+                    clearOfficerForm();
+                }
+
+            });
+
+            function clearOfficerForm(){
+                ['oFName','oLName','oPID'].forEach(function(id){document.getElementById(id).value='';});
+            }
+
+            function formatTimeForInput(timeStr){
+                if(!timeStr) return '';
+
+                if(typeof timeStr === "string" && timeStr.startsWith('PT')){
+                    const hoursMatch = timeStr.match(/(\d+)H/);
+                    const minutesMatch = timeStr.match(/(\d+)M/);
+                    const hours = hoursMatch ? hoursMatch[1].padStart(2,'0') : '00';
+                    const minutes = minutesMatch ? minutesMatch[1].padStart(2,'0') : '00';
+                    return hours + ':' + minutes;
+                }
+
+                return timeStr.substring(0,5);
+            }
+
+            function clearViolationForm(){
+                ['newVioCode','newVioCodeDesc'].forEach(function(id){document.getElementById(id).value='';});
+            }
+            document.getElementById('newVioSubmitBtn').addEventListener('click', async function(){
+                showLoading('newVioSubmitBtn');
+                try{
+                    await apiFetch('/violation-code/',{
+                        method: 'POST',
+                        body: JSON.stringify({
+                            VioCode: document.getElementById('newVioCode').value,
+                            Description: document.getElementById('newVioCodeDesc').value
+                        })
+                    });
+                    showToast('Violation Code Created');
+                } catch (err){
+                    showToast('Violation Code Already Exists', 'error');
+                } finally{
+                    hideLoading('newVioSubmitBtn');
+                    clearViolationForm();
+                }
+            });
+
+            function clearActionForm(){
+                ['newActCode', 'newActCodeDesc'].forEach(function(id){document.getElementById(id).value='';});
+            }
+            document.getElementById('newActSubmitBtn').addEventListener('click', async function(){
+                showLoading('newActSubmitBtn');
+                try{
+                    await apiFetch('/action-code/',{
+                        method: 'POST',
+                        body: JSON.stringify({
+                            ActCode: document.getElementById('newActCode').value,
+                            Description: document.getElementById('newActCodeDesc').value
+                        })
+                    });
+                    showToast('Action Code Created');
+                } catch(err){
+                    showToast('Action Code Already Exists', 'error');
+                } finally{
+                    hideLoading('newActSubmitBtn');
+                    clearActionForm();
+                }
+            })
+        </script>
+    </body>
+</html>
