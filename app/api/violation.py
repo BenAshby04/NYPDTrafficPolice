@@ -20,11 +20,11 @@ async def get_violation_stats(db:Session = Depends(get_db)):
         "by_violation_type": [dict(r) for r in byType]
     }
 
-@router.post("/", response_model=Violation)
+@router.post("/", response_model=dict)
 async def create_new_violation(violation: Violation, db: Session = Depends(get_db)):
     return await add_violation(db, violation.violation_date,violation.violation_time,violation.location,violation.DLNum,violation.PID,violation.VIN,violation.vioCode,violation.notes,violation.actCode)
 
-@router.put("/{ViolationID}", response_model=Violation)
+@router.put("/{ViolationID}", response_model=dict)
 async def update_violation_by_id(ViolationID: int, violation: Violation, db: Session = Depends(get_db)):
     return await update_violation(db, ViolationID, violation.violation_date,violation.violation_time,violation.location,violation.DLNum,violation.PID,violation.VIN,violation.vioCode,violation.notes,violation.actCode)
 
