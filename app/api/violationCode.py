@@ -16,7 +16,7 @@ async def get_violation_code_by_id(ViolationCodeID: int, db: Session = Depends(g
 async def create_new_violation_code(violation_code: ViolationCode, db: Session = Depends(get_db)):
     return await create_violationCode(db, violation_code)
 
-@router.put("/{ViolationCodeID}", response_model=ViolationCode)
+@router.put("/{ViolationCodeID}", response_model=dict)
 async def update_violation_code_by_id(ViolationCodeID: int, violation_code: ViolationCode, db: Session = Depends(get_db)):
     return await update_violationCode(db, ViolationCodeID, violation_code)
 

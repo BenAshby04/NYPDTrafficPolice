@@ -17,7 +17,7 @@ async def get_action_code_by_id(CodeID: int, db: Session = Depends(get_db)):
 async def create_new_action_code(action_code: actionCode, db: Session = Depends(get_db)):
     return await create_actionCode(db, action_code)
 
-@router.put("/{CodeID}", response_model=actionCode)
+@router.put("/{CodeID}", response_model=dict)
 async def update_action_code_by_id(CodeID: int, action_code: actionCode, db: Session = Depends(get_db)):
     return await update_actionCode(db, CodeID, action_code)
 
