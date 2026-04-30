@@ -38,6 +38,6 @@ function validateNumber(value){
     return !isNaN(value) && parseFloat(value) > 0;
 }
 
-function validatePastDate(dataStr){
+function validatePastDate(dateStr){
     return new Date(dateStr) <= new Date();
 }
