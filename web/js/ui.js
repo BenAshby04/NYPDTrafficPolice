@@ -26,6 +26,6 @@ function showToast(message, type){
 
     setTimeout(function(){
         toast.style.opacity = '0';
-        setTimeout(function(){toast.remove;}, 300);
+        setTimeout(function(){toast.remove();}, 300);
     }, 3000);
 }
