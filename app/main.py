@@ -5,6 +5,7 @@ from app.api import actionCode, address, assigned, detatchment, district, lives,
 
 app = FastAPI()
 
+init_db()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:5500",
