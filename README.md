@@ -11,7 +11,7 @@ Terminal 1 (MySQL server)
 ```bash
   cd docker
   docker build -t nypd:1.0 .
-  docker run -d -p 3306:3306 --name NYPD nypd:1.0
+  docker-compose up
 ```
  
 Terminal 2 (FastAPI)
