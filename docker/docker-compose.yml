@@ -1,0 +1,9 @@
+version: '1.0'
+services:
+  nypd:
+    image: "nypd:1.0"
+    platform: linux/x86_64
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+    ports:
+      - "3306:3306"

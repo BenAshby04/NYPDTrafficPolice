@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS District(
     DistrictName VARCHAR(50) NOT NULL
 );	
 
-CREATE TABLE IF NOT EXISTS User(
+CREATE TABLE IF NOT EXISTS Users(
     UserID INT PRIMARY KEY AUTO_INCREMENT,
     Username VARCHAR(50) NOT NULL,
     HashedPassword VARCHAR(255) NOT NULL,
@@ -210,7 +210,7 @@ CREATE TABLE IF NOT EXISTS UserPerson(
     UserID INT NOT NULL,
     DLNum VARCHAR(50) NOT NULL,
     PRIMARY KEY(UserID, DLNum),
-    FOREIGN KEY(UserID) REFERENCES User(UserID)
+    FOREIGN KEY(UserID) REFERENCES Users(UserID)
     ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(DLNum) REFERENCES Person(DLNum)
     ON DELETE CASCADE ON UPDATE CASCADE
@@ -454,6 +454,6 @@ GRANT EXECUTE ON PROCEDURE NYPD.addNotice TO policeRole;
 -- UPDATE NoticeVio SET Notes = 'Front-Right headlight is Out', VioCode = 'Light01' WHERE NID = 2;
 -- SELECT * FROM NoticeVio WHERE NID = 2;
 
---Temp user for testing
-INSERT INTO User (Username, HashedPassword, UserRole)
+-- Temp user for testing
+INSERT INTO Users (Username, HashedPassword, UserRole)
 VALUES ('root', '$argon2id$v=19$m=65536,t=3,p=4$GgOAMKY0JkSI8Z7z3puzlg$KpDKq15axN7k+bQFhya0Hl3vLEOW4zg1unEsFefamU8', 'admin');
