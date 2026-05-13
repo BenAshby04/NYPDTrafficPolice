@@ -51,11 +51,11 @@ CREATE TABLE IF NOT EXISTS ViolationCode(
     Description VARCHAR(255) NOT NULL
 );
 
-#Inserting some sample data
-INSERT INTO ViolationCode(VioCode, Description)
-VALUES('Light01', '1 or more headlight is out'),
-('Speed01', '5MPH over speed limit'),
-('Light02', 'Breaklight out');
+-- #Inserting some sample data
+-- INSERT INTO ViolationCode(VioCode, Description)
+-- VALUES('Light01', '1 or more headlight is out'),
+-- ('Speed01', '5MPH over speed limit'),
+-- ('Light02', 'Breaklight out');
 
 #ActionCode table - the actions from the brief
 CREATE TABLE IF NOT EXISTS ActionCode(
@@ -63,11 +63,11 @@ CREATE TABLE IF NOT EXISTS ActionCode(
     Description VARCHAR(255) NOT NULL
 );
 
-#Inserting some sample data
-INSERT INTO ActionCode (ActCode, Description)
-VALUES ('Warn1', 'This is a warning, no further action is needed'),
-('Repair01', 'You need to repair this vehicle immediately'),
-('Correct14','You need to correct and return this to a station within 14 days');
+-- #Inserting some sample data
+-- INSERT INTO ActionCode (ActCode, Description)
+-- VALUES ('Warn1', 'This is a warning, no further action is needed'),
+-- ('Repair01', 'You need to repair this vehicle immediately'),
+-- ('Correct14','You need to correct and return this to a station within 14 days');
 
 # a table for some basic info about the officer
 CREATE TABLE IF NOT EXISTS Officer(
@@ -435,21 +435,25 @@ GRANT EXECUTE ON PROCEDURE NYPD.addNotice TO policeRole;
 # Insert sample data
 
 #Sample People
-CALL AddPersonAddressVehicle('NY123456', 'John', 'Smith','2000-1-1',102.2,50.0,'Blue','NY',  '123', '1001', '5th Ave', 'NY',  'SAMPLE VIN1', 'NY1234', 'NY', 2021, 'Honda Civic');
-CALL AddPersonAddressVehicle('NY144567', 'Tim', 'Addams','2004-5-6',134.2,55.0,'Green','NY',  '123', '1001', '5th Ave', 'NY',  'SAMPLE VIN2', 'NY2345', 'NY', 2023, 'BMW M3');
-#Sample Officers
-CALL AddOficerDepartmentDistrict('Manhattan North', '15th station', 1234, 'Paul','Adams');
-CALL AddOficerDepartmentDistrict('Manhattan South', '12th station', 2345, 'Sarah','Jane');
-#Sample Notice / Violation
-CALL addNotice('2025-10-5', '20:00','13th strt, 5th ave', 'NY123456', 'SAMPLE VIN1', 1234,'Light01','Front-Right headlight is Out','Correct14');
-CALL addNotice('2025-10-6', '21:21','13th strt, 5th ave', 'NY123456', 'SAMPLE VIN1', 1234,'Light02','Back left Breaklight is out','Correct14');
-CALL addNotice('2025-10-3', '09:32','15th strt, 5th ave', 'NY144567', 'SAMPLE VIN1', 1234,'Light02','Back left Breaklight is out','Correct14');
+-- CALL AddPersonAddressVehicle('NY123456', 'John', 'Smith','2000-1-1',102.2,50.0,'Blue','NY',  '123', '1001', '5th Ave', 'NY',  'SAMPLE VIN1', 'NY1234', 'NY', 2021, 'Honda Civic');
+-- CALL AddPersonAddressVehicle('NY144567', 'Tim', 'Addams','2004-5-6',134.2,55.0,'Green','NY',  '123', '1001', '5th Ave', 'NY',  'SAMPLE VIN2', 'NY2345', 'NY', 2023, 'BMW M3');
+-- #Sample Officers
+-- CALL AddOficerDepartmentDistrict('Manhattan North', '15th station', 1234, 'Paul','Adams');
+-- CALL AddOficerDepartmentDistrict('Manhattan South', '12th station', 2345, 'Sarah','Jane');
+-- #Sample Notice / Violation
+-- CALL addNotice('2025-10-5', '20:00','13th strt, 5th ave', 'NY123456', 'SAMPLE VIN1', 1234,'Light01','Front-Right headlight is Out','Correct14');
+-- CALL addNotice('2025-10-6', '21:21','13th strt, 5th ave', 'NY123456', 'SAMPLE VIN1', 1234,'Light02','Back left Breaklight is out','Correct14');
+-- CALL addNotice('2025-10-3', '09:32','15th strt, 5th ave', 'NY144567', 'SAMPLE VIN1', 1234,'Light02','Back left Breaklight is out','Correct14');
 
  
  
-SELECT * FROM NoticeVio WHERE NID = 1;
-UPDATE NoticeVio SET Notes = 'Front-Left headlight is Out' WHERE NID = 1;
-SELECT * FROM NoticeVio WHERE NID = 1;
-SELECT * FROM NoticeVio WHERE NID = 2;
-UPDATE NoticeVio SET Notes = 'Front-Right headlight is Out', VioCode = 'Light01' WHERE NID = 2;
-SELECT * FROM NoticeVio WHERE NID = 2;
+-- SELECT * FROM NoticeVio WHERE NID = 1;
+-- UPDATE NoticeVio SET Notes = 'Front-Left headlight is Out' WHERE NID = 1;
+-- SELECT * FROM NoticeVio WHERE NID = 1;
+-- SELECT * FROM NoticeVio WHERE NID = 2;
+-- UPDATE NoticeVio SET Notes = 'Front-Right headlight is Out', VioCode = 'Light01' WHERE NID = 2;
+-- SELECT * FROM NoticeVio WHERE NID = 2;
+
+--Temp user for testing
+INSERT INTO User (Username, HashedPassword, UserRole)
+VALUES ('root', '$argon2id$v=19$m=65536,t=3,p=4$GgOAMKY0JkSI8Z7z3puzlg$KpDKq15axN7k+bQFhya0Hl3vLEOW4zg1unEsFefamU8', 'admin');
